@@ -18,7 +18,7 @@ const PATIENT_STATIONS = [
         icon: '📱',
         name: 'Evidence-Based Crush Injury Risk Calculator',
         desc: 'Online clinical decision tool predicting acute kidney injury risk in traumatic crush syndrome to guide fluid and bicarbonate resuscitation.',
-        url: 'https://www.mdcalc.com/calc/10231/mcmahon-score-rhabdomyolysis',
+        url: 'https://www.mdcalc.com/calc/4017/mcmahon-score-rhabdomyolysis',
         impact: 'Calculates McMahon Score from bedside inputs to stratify acute tubular necrosis risk and protocolize aggressive bicarbonate diuresis.'
       },
       {
@@ -26,7 +26,7 @@ const PATIENT_STATIONS = [
         icon: '💉',
         name: 'Digital Intracompartmental Pressure Monitor',
         desc: 'Sterile handheld pressure monitor providing real-time quantitative intramuscular compartment pressures for surgical decision-making.',
-        url: 'https://www.stryker.com/us/en/acute-care/products/intracompartmental-pressure-monitor-system.html',
+        url: 'https://pdf.medicalexpo.com/pdf/stryker/intra-compartmental-pressure-monitor/70192-169461.html',
         impact: 'Delivers quantitative delta compartment pressure readings at the bedside to guide emergent fasciotomy consultation.'
       },
       {
@@ -34,7 +34,7 @@ const PATIENT_STATIONS = [
         icon: '🎙️',
         name: 'AI Ambient Clinical Documentation System',
         desc: 'Hands-free voice AI automatically capturing hourly fluid logs, urine output, and serial neurovascular exams in real time.',
-        url: 'https://www.nuance.com/healthcare/ambient-clinical-intelligence.html',
+        url: 'https://www.ambiencehealthcare.com/products',
         impact: 'Transcribes serial intake/output fluid logs and physical exam findings hands-free, allowing the clinician to remain at the bedside.'
       },
       {
@@ -42,7 +42,7 @@ const PATIENT_STATIONS = [
         icon: '🧪',
         name: 'Point-of-Care Handheld Blood Analyzer',
         desc: 'Portable cartridge-based analyzer delivering 2-minute bedside potassium, lactate, and blood gas results from whole blood.',
-        url: 'https://www.pointofcare.abbott/',
+        url: 'https://www.globalpointofcare.abbott/us/en/product-details/apoc/i-stat-system-us.html',
         impact: 'Provides point-of-care potassium and blood gas values in 120 seconds, enabling immediate detection of hyperkalemia before cardiac toxicity occurs.'
       }
     ]
@@ -112,7 +112,7 @@ const PATIENT_STATIONS = [
         icon: '⏱️',
         name: 'Smart ACLS Resuscitation Code Tracker',
         desc: 'Mobile app tracking 2-minute CPR intervals, shock cycles, epinephrine dosing, and cardiac rhythm logs in real time.',
-        url: 'https://cpr.heart.org/en/resources/full-code-pro-app',
+        url: 'https://cpr.heart.org/en/cpr-courses-and-kits/healthcare-professional/acls/aha-acls-app',
         impact: 'Tracks exact defibrillation intervals, timestamps medication doses, and coordinates resuscitation choreography across the full team.'
       },
       {
@@ -128,7 +128,7 @@ const PATIENT_STATIONS = [
         icon: '📈',
         name: 'AI 12-Lead ECG Analysis Platform',
         desc: 'Deep learning platform detecting acute coronary occlusion and STEMI equivalents on post-ROSC ECGs in real time.',
-        url: 'https://cardiologs.com/',
+        url: 'https://www.powerfulmedical.com/',
         impact: 'Processes post-resuscitation ECGs through neural networks to detect acute coronary occlusion and auto-alert the catheterization lab.'
       }
     ]
@@ -147,7 +147,7 @@ const PATIENT_STATIONS = [
         icon: '📡',
         name: 'Emergency Tele-Obstetric Video Consult',
         desc: 'High-definition mobile video workstation connecting the trauma bay to remote maternal-fetal medicine specialists for live image review.',
-        url: 'https://www.teladochealth.com/organizations/hospitals-health-systems/virtual-care-solutions',
+        url: 'https://www.teladochealth.com/organizations/hospitals-health-systems/specialty-emergency-access',
         impact: 'Connects directly to an off-site maternal-fetal specialist who reviews real-time ultrasound and guides emergent obstetrical surgical clearance.'
       },
       {
@@ -155,7 +155,7 @@ const PATIENT_STATIONS = [
         icon: '🩺',
         name: 'Handheld Digital Fetal Doppler',
         desc: 'High-sensitivity pocket Doppler providing real-time digital fetal heart rate display at the bedside.',
-        url: 'https://www.huntleigh-diagnostics.com/obstetric-products/sonicaid-one/',
+        url: 'https://www.huntleigh-healthcare.us/our-products/fetal-monitoring/fetal-dopplers-sonicaid-doppler-systems-huntleigh/',
         impact: 'Rapidly displays real-time fetal heart rate to continuously monitor fetal status during maternal resuscitation.'
       },
       {
@@ -163,7 +163,7 @@ const PATIENT_STATIONS = [
         icon: '🚁',
         name: 'Autonomous Medical Blood Delivery Drone',
         desc: 'Autonomous drone system dispatching emergency uncrossmatched blood products from regional depots across disaster-damaged roads.',
-        url: 'https://www.flyzipline.com/products',
+        url: 'https://www.archerfrs.com/',
         impact: 'Bypasses earthquake-damaged roads to deliver uncrossmatched packed red blood cells by autonomous UAV in under 15 minutes.'
       },
       {
@@ -171,7 +171,7 @@ const PATIENT_STATIONS = [
         icon: '🩻',
         name: 'AI Real-Time Ultrasound Guidance Platform',
         desc: 'AI navigation software providing on-screen turn-by-turn probe guidance, enabling non-experts to capture diagnostic obstetric images.',
-        url: 'https://www.gehealthcare.com/products/ultrasound/caption-health',
+        url: 'https://www.gehealthcare.com/en-us/products/ultrasound/ai-in-ultrasound',
         impact: 'Guides non-specialist probe placement with real-time visual cues to confirm placental position and intraperitoneal free fluid.'
       }
     ]
@@ -206,7 +206,7 @@ const PATIENT_STATIONS = [
         icon: '📡',
         name: 'Wireless Continuous Vital Sign Patch',
         desc: 'Lightweight wearable chest sensor continuously streaming heart rate and respiratory rate to a monitoring tablet.',
-        url: 'https://sensium.co.uk/product/',
+        url: 'https://www.ascom.com/about-us/why-ascom/interoperability-partners/sensium/',
         impact: 'Continuously tracks respiratory rate trends in the surge tent, freeing staff to attend to higher-acuity resuscitation bays.'
       },
       {
@@ -214,7 +214,7 @@ const PATIENT_STATIONS = [
         icon: '🎙️',
         name: 'Acoustic AI Respiratory Analyzer',
         desc: 'Acoustic AI platform analyzing vocal distress cadences and breath sounds to evaluate work of breathing and hyperventilation patterns.',
-        url: 'https://corti.ai/platform/triage',
+        url: 'https://hyfe.com/insights/acoustic-ai-frameworks-single-sound-analysis-vs-continuous-cough-monitoring',
         impact: 'Analyzes vocal cadence and breathing acoustics to confirm hyperventilation and differentiate it from upper airway obstruction.'
       }
     ]
@@ -241,7 +241,7 @@ const PATIENT_STATIONS = [
         icon: '🫁',
         name: 'Video Laryngoscope System',
         desc: 'High-definition digital laryngoscope enabling visualization of the edematous glottis before progressive thermal airway swelling closes it.',
-        url: 'https://www.verathon.com/glidescope/glidescope-core/',
+        url: 'https://csymplicity.com/burnhelp',
         impact: 'Provides HD visualization for early endotracheal intubation before progressive thermal edema closes the airway.'
       },
       {
@@ -257,7 +257,7 @@ const PATIENT_STATIONS = [
         icon: '💧',
         name: 'Smart Bedside Infusion Pump System',
         desc: 'Volumetric infusion pump with dose-error reduction software for precise hourly fluid titration based on weight and burn surface area.',
-        url: 'https://www.baxter.com/healthcare-professionals/infusion-systems/spectrum-iq-infusion-system',
+        url: 'https://pro.baxter.com/products/infusion-therapies-technologies/infusion-systems-accessories/iqx-infusion-platform',
         impact: 'Delivers calculated hourly crystalloid volumes based on burn surface area, preventing under-resuscitation and pulmonary fluid overload.'
       }
     ]
@@ -276,7 +276,7 @@ const PATIENT_STATIONS = [
         icon: '🩻',
         name: 'Wireless Handheld Ultrasound Scanner',
         desc: 'Wireless handheld ultrasound scanner with AI pediatric presets for vascular access guidance and abdominal free-fluid screening.',
-        url: 'https://clarius.com/scanners/pal-hd3/',
+        url: 'https://clarius.com/scanners/',
         impact: 'Guides rapid femoral vascular access under real-time imaging while screening for occult intra-abdominal free fluid.'
       },
       {
@@ -284,7 +284,7 @@ const PATIENT_STATIONS = [
         icon: '🧪',
         name: 'Point-of-Care AI Optical Hematology Analyzer',
         desc: 'Computer-vision optical analyzer delivering complete CBC and platelet counts from a single fingerstick in 10 minutes.',
-        url: 'https://www.sightdx.com/olo',
+        url: 'https://www.medical-xprt.com/products/sight-olo-model-cbc-complete-blood-count-analyzer-791424',
         impact: 'Provides rapid CBC and platelet counts to assess acute hemorrhagic anemia and determine transfusion requirements in a pediatric patient.'
       },
       {
@@ -292,7 +292,7 @@ const PATIENT_STATIONS = [
         icon: '🤖',
         name: 'Autonomous Hospital Medication & Supply Robot',
         desc: 'Autonomous mobile hospital robot navigating elevators and corridors to retrieve pediatric blood packs and splint hardware.',
-        url: 'https://aethon.com/tug/',
+        url: 'https://aethon.com/zena-rx/',
         impact: 'Autonomously retrieves pediatric uncrossmatched blood units and splint supplies from central stock, freeing all staff for direct care.'
       },
       {
@@ -300,7 +300,7 @@ const PATIENT_STATIONS = [
         icon: '📡',
         name: 'Pediatric Emergency Tele-Specialist Consult',
         desc: 'Tele-mentoring platform connecting bedside clinicians with remote pediatric emergency attendings for sedation and procedure guidance.',
-        url: 'https://www.gaumard.com/pediatric-hal',
+        url: 'https://www.teladochealth.com/organizations/hospitals-health-systems/specialty-emergency-access',
         impact: 'Establishes a live video mentoring link with a pediatric emergency attending to supervise procedural sedation and fracture stabilization.'
       }
     ]
@@ -319,7 +319,7 @@ const PATIENT_STATIONS = [
         icon: '🔥',
         name: 'Active IV Fluid Warming Infusion System',
         desc: 'High-flow infusion system delivering crystalloid and blood products at 41°C to perform active internal core rewarming.',
-        url: 'https://www.icumed.com/products/temperature-management/blood-and-fluid-warmers/level-1-fast-flow-fluid-warmers',
+        url: 'https://www.icumed.com/products/temperature-management/blood-and-fluid-warming-systems/level-1-h-1200-fast-flow-fluid-warmer',
         impact: 'Infuses normothermic IV fluid at 41°C for rapid internal core rewarming, correcting severe hypothermic bradycardia and vasoplegia.'
       },
       {
@@ -327,7 +327,7 @@ const PATIENT_STATIONS = [
         icon: '🫁',
         name: 'Intelligent Adaptive Mechanical Ventilator',
         desc: 'ICU ventilator with closed-loop AI adaptive support algorithms and heated humidification for active airway rewarming.',
-        url: 'https://www.hamilton-medical.com/en_US/Products/Mechanical-ventilators/HAMILTON-C1.html',
+        url: 'https://www.hamilton-medical.com/en_US/Products/HAMILTON-C1.html',
         impact: 'Delivers heated, humidified ventilation through a closed-loop adaptive algorithm, actively rewarming the core via the pulmonary vasculature.'
       },
       {
@@ -343,7 +343,7 @@ const PATIENT_STATIONS = [
         icon: '📈',
         name: 'High-Definition 12-Lead Diagnostic ECG System',
         desc: 'Bedside 12-lead ECG machine with automated analysis detecting hypothermic J-waves (Osborn waves) and QT prolongation.',
-        url: 'https://www.gehealthcare.com/products/diagnostic-ecg/mac-5500-hd',
+        url: 'https://www.gehealthcare.com/en-us/products/diagnostic-ecg/resting-ecg/mac-vu360',
         impact: 'Identifies pathognomonic J-waves and monitors for ventricular irritability during active rewarming to guide antiarrhythmic management.'
       }
     ]
