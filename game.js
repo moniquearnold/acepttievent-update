@@ -350,14 +350,53 @@ const PATIENT_STATIONS = [
   }
 ];
 
+// Flags a vital sign string (e.g. 'HR: 112') as outside the normal range.
+// Heart rate and blood pressure thresholds adjust for children under 13.
+function isAbnormalVital(vital, station) {
+  const ageMatch = /^(\d+)/.exec(station.name || '');
+  const age = ageMatch ? Number(ageMatch[1]) : 30;
+  const child = age < 13;
+  const [rawLabel, ...rest] = vital.split(':');
+  const label = rawLabel.trim().toLowerCase();
+  const value = rest.join(':').trim();
+  const num = parseFloat(value);
+
+  if (label === 'bp') {
+    const [sbp, dbp] = value.split('/').map(Number);
+    if (isNaN(sbp) || isNaN(dbp)) return true;
+    const sbpLow = child ? 70 + 2 * age : 90;
+    const sbpHigh = child ? 120 : 140;
+    return sbp < sbpLow || sbp >= sbpHigh || dbp < (child ? 40 : 60) || dbp >= (child ? 80 : 90);
+  }
+  if (isNaN(num)) return true; // e.g. 'Unobtainable'
+  if (label === 'hr') return child ? (num < 70 || num > 120) : (num < 60 || num > 100);
+  if (label === 'rr') return child ? (num < 16 || num > 26) : (num < 12 || num > 20);
+  if (label === 'spo2') return num < 95;
+  if (label.includes('temp')) return num < 36.0 || num > 38.0;
+  return false;
+}
+
+function renderVitalChips(station) {
+  return station.vitals
+    .map(v => `<span class="vital-chip${isAbnormalVital(v, station) ? ' abnormal' : ''}">${v}</span>`)
+    .join('');
+}
+
+// Team names are typed by players, so escape them before inserting into the page
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
 class TTISimulationEngine {
   constructor() {
     this.stations = PATIENT_STATIONS;
-    // Removed team name – not used in UI
+    this.teamName = ''; // optional, typed on the welcome screen
     this.currentStationIdx = 0;
     this.patientResults = [];
     this.selectedOptionIds = [];
     this.isDeployed = false;
+    this.viewingOverview = false;
+    this.shiftComplete = false;
 
     this.totalTimerSeconds = 600;
     this.timerInterval = null;
@@ -376,27 +415,46 @@ class TTISimulationEngine {
     this.trackboardContainer = document.getElementById('trackboard-list');
     this.historyContainer = document.getElementById('history-list');
     this.stageViewport = document.getElementById('stage-viewport');
+    this.overviewBtn = document.getElementById('btn-view-trackboard');
+    this.teamInput = document.getElementById('team-name-input');
+    this.teamChip = document.getElementById('team-chip');
   }
 
   bindEvents() {
     this.startBtn.addEventListener('click', () => {
-      // Hide the instructions modal and start the simulation
+      // Capture the (optional) team name, then hide the instructions modal and start
+      this.teamName = this.teamInput ? this.teamInput.value.trim().replace(/\s+/g, ' ') : '';
+      if (this.teamChip && this.teamName) {
+        this.teamChip.textContent = `TEAM ${this.teamName}`;
+        this.teamChip.classList.remove('hidden');
+      }
       this.welcomeModal.classList.add('hidden');
       Sound.init();
       Sound.playClick();
       this.startSimulation();
     });
 
-    document.getElementById('btn-restart-sim').addEventListener('click', () => {
-      Sound.playClick();
-      location.reload();
-    });
+    // Pressing Enter in the team name box starts the shift
+    if (this.teamInput) {
+      this.teamInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') this.startBtn.click();
+      });
+    }
+
+    // Header button: open the full trackboard overview at any time during the shift
+    if (this.overviewBtn) {
+      this.overviewBtn.addEventListener('click', () => {
+        if (!this.simulationActive && !this.shiftComplete) return;
+        Sound.playClick();
+        this.renderOverview();
+      });
+    }
   }
 
   startSimulation() {
     this.simulationActive = true;
     this.startGlobalTimer(600);
-    this.renderStation(0);
+    this.renderOverview(); // open on the full trackboard so teams can triage before picking a case
   }
 
   startGlobalTimer(seconds) {
@@ -441,12 +499,72 @@ class TTISimulationEngine {
       this.finishSimulation();
       return;
     }
+    this.viewingOverview = false;
     this.currentStationIdx = idx;
     this.selectedOptionIds = [];
     this.isDeployed = !!this.patientResults[idx];
     this.renderTrackboard();
     this.renderHistory();
     this.renderStationCard(this.stations[idx]);
+  }
+
+  // Full-screen trackboard: every patient's description, vitals, and completion status
+  renderOverview() {
+    this.viewingOverview = true;
+    this.selectedOptionIds = [];
+    this.renderTrackboard();
+    this.renderHistory();
+
+    const isDone = r => !!r && Array.isArray(r.techUsed) && r.techUsed.length > 0;
+    const doneCount = this.stations.filter((st, idx) => isDone(this.patientResults[idx])).length;
+
+    const cardsHtml = this.stations.map((st, idx) => {
+      const res = this.patientResults[idx];
+      const done = isDone(res);
+      return `
+        <div class="overview-card ${done ? 'done' : 'pending'}" data-idx="${idx}">
+          <div class="overview-card-top">
+            <span class="track-bed">${st.bed}</span>
+            <span class="track-status-pill ${done ? 'deployed' : 'pending'}">${done ? '✓ COMPLETE' : 'NOT STARTED'}</span>
+          </div>
+          <div class="overview-title">${st.title}</div>
+          <div class="overview-venue">📍 ${st.venue}</div>
+          <div class="patient-vitals-bar">
+            ${renderVitalChips(st)}
+          </div>
+          <div class="overview-prompt">${st.prompt}</div>
+          ${done ? `<div class="overview-tech"><strong>Deployed:</strong> ${res.techUsed.join(', ')}</div>` : ''}
+          <div class="overview-open">${done ? 'REVIEW CASE →' : 'OPEN CASE →'}</div>
+        </div>`;
+    }).join('');
+
+    this.stageViewport.innerHTML = `
+      <div class="overview-header">
+        <div>
+          <div class="overview-heading">${this.teamName ? `TEAM ${escapeHtml(this.teamName.toUpperCase())} — ` : ''}ALL PATIENTS</div>
+          <div class="overview-sub">${this.shiftComplete ? 'Shift complete. Select any patient to review the case.' : 'Select any patient to open the case. The shift timer keeps running.'}</div>
+        </div>
+        <div class="overview-count">${doneCount} / ${this.stations.length} COMPLETE</div>
+      </div>
+      ${this.shiftComplete ? '<button class="submit-decision-btn" id="btn-overview-debrief" style="align-self: flex-start;">VIEW MASTER DEBRIEF →</button>' : ''}
+      <div class="overview-grid">${cardsHtml}</div>
+    `;
+    this.stageViewport.scrollTop = 0;
+
+    const debriefBtn = document.getElementById('btn-overview-debrief');
+    if (debriefBtn) {
+      debriefBtn.addEventListener('click', () => {
+        Sound.playClick();
+        this.finishSimulation();
+      });
+    }
+
+    this.stageViewport.querySelectorAll('.overview-card').forEach(card => {
+      card.addEventListener('click', () => {
+        Sound.playClick();
+        this.renderStation(Number(card.dataset.idx));
+      });
+    });
   }
 
   renderTrackboard() {
@@ -457,7 +575,7 @@ class TTISimulationEngine {
 
       const result = this.patientResults[idx];
       if (result) { statusClass = 'deployed'; statusText = 'DONE'; pillClass = 'deployed'; }
-      else if (idx === this.currentStationIdx) { statusClass = 'active'; statusText = 'ACTIVE'; pillClass = 'active-row'; }
+      else if (idx === this.currentStationIdx && !this.viewingOverview) { statusClass = 'active'; statusText = 'ACTIVE'; pillClass = 'active-row'; }
 
       row.className = `track-row ${statusClass}`;
       row.style.cursor = 'pointer';
@@ -469,6 +587,7 @@ class TTISimulationEngine {
       // Allow user to click any row to view that case
       row.addEventListener('click', () => {
         // Load the selected case without resetting overall state
+        this.viewingOverview = false;
         this.currentStationIdx = idx;
         this.selectedOptionIds = [];
         this.isDeployed = this.patientResults[idx] ? true : false;
@@ -504,6 +623,7 @@ class TTISimulationEngine {
     const priorResult = this.patientResults[this.currentStationIdx];
 
     this.stageViewport.innerHTML = `
+      <button class="back-to-board-btn" id="btn-back-to-board">← ALL PATIENTS</button>
       <div class="patient-card">
         <div class="patient-header">
           <div class="patient-station-number">
@@ -514,7 +634,7 @@ class TTISimulationEngine {
         </div>
 
         <div class="patient-vitals-bar">
-          ${st.vitals.map(v => `<span class="vital-chip">${v}</span>`).join('')}
+          ${renderVitalChips(st)}
         </div>
 
         <div class="patient-prompt-box">${st.prompt}</div>
@@ -533,6 +653,14 @@ class TTISimulationEngine {
         <div id="outcome-container"></div>
       </div>
     `;
+
+    const backBtn = document.getElementById('btn-back-to-board');
+    if (backBtn) {
+      backBtn.addEventListener('click', () => {
+        Sound.playClick();
+        this.renderOverview();
+      });
+    }
 
     // Render option cards
     const optionsSection = document.querySelector('.options-list');
@@ -655,6 +783,68 @@ class TTISimulationEngine {
     if (btnContainer) btnContainer.style.display = 'none';
 
     this._showOutcomeBox(selectedOpts);
+
+    // Final case deployed: stop the clock and congratulate the team
+    if (this.allCasesComplete()) this.showCongrats();
+  }
+
+  allCasesComplete() {
+    return this.stations.every((st, idx) => {
+      const r = this.patientResults[idx];
+      return !!r && Array.isArray(r.techUsed) && r.techUsed.length > 0;
+    });
+  }
+
+  showCongrats() {
+    if (this.timerInterval) clearInterval(this.timerInterval);
+    this.simulationActive = false;
+    this.shiftComplete = true;
+
+    const fmt = s => `${Math.floor(s / 60)}m ${s % 60}s`;
+    const remaining = Math.max(0, this.totalTimerSeconds);
+    const techCount = this.patientResults.reduce((n, r) => n + r.techUsed.length, 0);
+
+    document.getElementById('congrats-content-area').innerHTML = `
+      <div class="congrats-icon">🎉</div>
+      <h2>${this.teamName ? `CONGRATULATIONS, TEAM ${escapeHtml(this.teamName.toUpperCase())}!<br>YOUR SHIFT IS OVER.` : 'CONGRATULATIONS, YOUR SHIFT IS OVER!'}</h2>
+      <div class="instructions-subtitle">ALL 8 PATIENTS CARED FOR</div>
+      <p class="congrats-text">
+        Your team worked through every casualty from the 2028 LA Olympics earthquake and got the right technology to the bedside. Time to sign out.
+      </p>
+      <div class="debrief-score-grid">
+        <div class="debrief-score-box">
+          <div class="num">${this.stations.length} / ${this.stations.length}</div>
+          <div class="lbl">CASES COMPLETED</div>
+        </div>
+        <div class="debrief-score-box">
+          <div class="num">${fmt(600 - remaining)}</div>
+          <div class="lbl">TIME ON SHIFT</div>
+        </div>
+        <div class="debrief-score-box">
+          <div class="num">${techCount}</div>
+          <div class="lbl">TECHNOLOGIES DEPLOYED</div>
+        </div>
+      </div>
+      <button class="submit-decision-btn" id="btn-congrats-debrief" style="width: 100%; text-align: center; font-size: 1rem; padding: 14px;">
+        VIEW MASTER DEBRIEF →
+      </button>
+      <button class="back-to-board-btn" id="btn-congrats-review" style="align-self: center;">
+        REVIEW CASES FIRST
+      </button>
+    `;
+
+    const modal = document.getElementById('congrats-modal');
+    document.getElementById('btn-congrats-debrief').addEventListener('click', () => {
+      Sound.playClick();
+      modal.classList.add('hidden');
+      this.finishSimulation();
+    });
+    document.getElementById('btn-congrats-review').addEventListener('click', () => {
+      Sound.playClick();
+      modal.classList.add('hidden');
+      this.renderOverview();
+    });
+    modal.classList.remove('hidden');
   }
 
   handleGlobalTimeout() {
@@ -683,6 +873,7 @@ class TTISimulationEngine {
     document.getElementById('debrief-content-area').innerHTML = `
       <div class="debrief-header">
         <h2>MASTER SIMULATION DEBRIEF</h2>
+        ${this.teamName ? `<p style="color: var(--accent-cyan); font-size: 0.95rem; font-weight: 700; margin-top: 6px;">TEAM ${escapeHtml(this.teamName.toUpperCase())}</p>` : ''}
         <p style="color: var(--accent-amber); font-size: 0.85rem; font-weight: 600; margin-top: 4px;">
           2028 LA OLYMPICS EARTHQUAKE RESPONSE
         </p>
